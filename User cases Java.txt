@@ -1,0 +1,138 @@
+class BankAccount {
+    String owner;
+    int balance;
+    String type;
+
+    public BankAccount(String owner, int balance, String type) {
+        this.owner = owner;
+        this.balance = balance;
+        this.type = type;
+    }
+}
+
+class AccountSetup {
+    BankAccount account;
+
+    public AccountSetup(String owner, int balance, String type) {
+        account = new BankAccount(owner, balance, type);
+    }
+}
+
+class AccountViewer {
+    BankAccount account;
+
+    public AccountViewer(BankAccount account) {
+        this.account = account;
+    }
+
+    public void display() {
+        System.out.println("Owner: " + account.owner);
+        System.out.println("Balance: " + account.balance);
+        System.out.println("Type: " + account.type);
+    }
+}
+
+class DepositTracker {
+    BankAccount account;
+
+    public DepositTracker(BankAccount account) {
+        this.account = account;
+    }
+
+    public int getTotalDeposits(int[] deposits) {
+        int total = 0;
+        for (int i = 0; i < deposits.length; i++) {
+            total += deposits[i];
+        }
+        return total;
+    }
+}
+
+class OverdraftChecker {
+    BankAccount account;
+
+    public OverdraftChecker(BankAccount account) {
+        this.account = account;
+    }
+
+    public boolean allSufficient(int[] withdrawals, int minBalance) {
+        int currentBalance = account.balance;
+
+        for (int i = 0; i < withdrawals.length; i++) {
+            currentBalance -= withdrawals[i];
+            if (currentBalance < minBalance) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+class AccountTypeDesk {
+    BankAccount account;
+
+    public AccountTypeDesk(BankAccount account) {
+        this.account = account;
+    }
+
+    public void checkType(String[] allowedTypes) {
+        for (int i = 0; i < allowedTypes.length; i++) {
+            if (account.type.equals(allowedTypes[i])) {
+                System.out.println("Access granted for " + account.owner);
+                return;
+            }
+        }
+        System.out.println("Account type not supported.");
+    }
+}
+
+class BankSummary {
+    BankAccount account;
+    int totalDeposits;
+    boolean allSufficient;
+
+    public BankSummary(BankAccount account, int totalDeposits, boolean allSufficient) {
+        this.account = account;
+        this.totalDeposits = totalDeposits;
+        this.allSufficient = allSufficient;
+    }
+
+    public void printSummary() {
+        System.out.println("Owner: " + account.owner);
+        System.out.println("Total Deposits: " + totalDeposits);
+        System.out.println("Withdrawals OK: " + allSufficient);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        int[] deposits = {200, 500, 150};
+        int[] withdrawals = {100, 200};
+        String[] allowedTypes = {"Savings", "Fixed"};
+
+        // Step 1: Create account
+        AccountSetup setup = new AccountSetup("Alice", 5000, "Savings");
+        BankAccount acc = setup.account;
+
+        // Step 2: View account
+        AccountViewer viewer = new AccountViewer(acc);
+        viewer.display();
+
+        // Step 3: Track deposits
+        DepositTracker tracker = new DepositTracker(acc);
+        int totalDeposits = tracker.getTotalDeposits(deposits);
+
+        // Step 4: Check overdraft
+        OverdraftChecker checker = new OverdraftChecker(acc);
+        boolean ok = checker.allSufficient(withdrawals, 1000);
+
+        // Step 5: Check account type
+        AccountTypeDesk desk = new AccountTypeDesk(acc);
+        desk.checkType(allowedTypes);
+
+        // Step 6: Summary
+        BankSummary summary = new BankSummary(acc, totalDeposits, ok);
+        summary.printSummary();
+    }
+}
